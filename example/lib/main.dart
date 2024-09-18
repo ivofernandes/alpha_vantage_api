@@ -1,125 +1,162 @@
 import 'package:flutter/material.dart';
+import 'package:alpha_vantage_api/services/complete_alpha_vantage_service.dart';
+import 'package:flutter/services.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(AlphaVantageExampleApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class AlphaVantageExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Alpha Vantage Example',
+      theme: ThemeData.dark(), // Enable dark mode
+      home: AlphaVantageHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class AlphaVantageHomePage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _AlphaVantageHomePageState createState() => _AlphaVantageHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _AlphaVantageHomePageState extends State<AlphaVantageHomePage> {
+  final _apiKeyController = TextEditingController();
+  final _symbolController = TextEditingController(text: '');
+  final _intervalController = TextEditingController(text: '5min');
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  String _result = 'Enter your API key and press "Fetch Data"';
+
+  // List of available functions
+  final List<String> _functions = [
+    'EARNINGS_CALENDAR',
+    'TIME_SERIES_INTRADAY',
+  ];
+
+  String _selectedFunction = 'EARNINGS_CALENDAR';
+
+  void _fetchData() async {
+    final apiKey = _apiKeyController.text.trim();
+    if (apiKey.isEmpty) {
+      setState(() {
+        _result = 'Please enter a valid API key.';
+      });
+      return;
+    }
+
+    final service = CompleteAlphaVantageService(apiKey);
+    final functionName = _selectedFunction;
+    final symbol = _symbolController.text.trim();
+
+    // Collect additional parameters based on selected function
+    Map<String, String> additionalParams = {'symbol': symbol};
+    if (functionName == 'TIME_SERIES_INTRADAY') {
+      additionalParams['interval'] = _intervalController.text.trim();
+    }
+
+    try {
+      final content = await service.fetchContent(
+        functionName,
+        additionalParams: additionalParams,
+      );
+      setState(() {
+        _result = content;
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Failed to fetch data: $e';
+      });
+    }
+  }
+
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: _result));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Copied to clipboard'),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _apiKeyController.dispose();
+    _symbolController.dispose();
+    _intervalController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text('Alpha Vantage Example'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView( // Prevent overflow when keyboard appears
+          child: Column(
+            children: [
+              TextField(
+                controller: _apiKeyController,
+                decoration: InputDecoration(
+                  labelText: 'Alpha Vantage API Key',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedFunction,
+                items: _functions.map((String function) {
+                  return DropdownMenuItem<String>(
+                    value: function,
+                    child: Text(function),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedFunction = newValue!;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: 'Select Function',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: _symbolController,
+                decoration: InputDecoration(
+                  labelText: 'Symbol (e.g., IBM)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              if (_selectedFunction == 'TIME_SERIES_INTRADAY') ...[
+                TextField(
+                  controller: _intervalController,
+                  decoration: InputDecoration(
+                    labelText: 'Interval (e.g., 1min, 5min)',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 16),
+              ],
+              ElevatedButton(
+                onPressed: _fetchData,
+                child: Text('Fetch Data'),
+              ),
+              ElevatedButton(onPressed: _copyToClipboard, child: Text('Copy to Clipboard'),),
+              SizedBox(height: 16),
+              Text(
+                _result,
+                style: TextStyle(fontFamily: 'Courier'),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

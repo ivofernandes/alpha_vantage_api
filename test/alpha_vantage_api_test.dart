@@ -16,7 +16,7 @@ void main() {
     });
 
     test('fetchContent fetches real data', () async {
-      final functionName = 'TIME_SERIES_INTRADAY';
+      const functionName = 'TIME_SERIES_INTRADAY';
       final additionalParams = {'symbol': 'IBM', 'interval': '5min'};
 
       try {
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('EARNINGS_CALENDAR request', () async {
-      final functionName = 'EARNINGS_CALENDAR';
+      const functionName = 'EARNINGS_CALENDAR';
 
       try {
         // The additional parameters for the EARNINGS_CALENDAR request can vary
