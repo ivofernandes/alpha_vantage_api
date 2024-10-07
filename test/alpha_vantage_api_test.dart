@@ -20,7 +20,8 @@ void main() {
       final additionalParams = {'symbol': 'IBM', 'interval': '5min'};
 
       try {
-        final content = await service.fetchContent(functionName, additionalParams: additionalParams);
+        final content = await service.fetchContent(functionName,
+            additionalParams: additionalParams);
         print('Received content: $content');
 
         expect(content.isNotEmpty, isTrue);

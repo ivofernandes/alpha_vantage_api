@@ -95,7 +95,8 @@ class _AlphaVantageHomePageState extends State<AlphaVantageHomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView( // Prevent overflow when keyboard appears
+        child: SingleChildScrollView(
+          // Prevent overflow when keyboard appears
           child: Column(
             children: [
               TextField(
@@ -147,7 +148,10 @@ class _AlphaVantageHomePageState extends State<AlphaVantageHomePage> {
                 onPressed: _fetchData,
                 child: Text('Fetch Data'),
               ),
-              ElevatedButton(onPressed: _copyToClipboard, child: Text('Copy to Clipboard'),),
+              ElevatedButton(
+                onPressed: _copyToClipboard,
+                child: Text('Copy to Clipboard'),
+              ),
               SizedBox(height: 16),
               Text(
                 _result,

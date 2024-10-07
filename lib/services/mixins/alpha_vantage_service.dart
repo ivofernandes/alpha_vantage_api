@@ -10,7 +10,8 @@ mixin AlphaVantageService {
     apiKey = key;
   }
 
-  Future<String> fetchContent(String functionName, {Map<String, String>? additionalParams}) async {
+  Future<String> fetchContent(String functionName,
+      {Map<String, String>? additionalParams}) async {
     final Uri uri = Uri.https(
       'www.alphavantage.co',
       '/query',
@@ -37,7 +38,8 @@ mixin AlphaVantageService {
         print('Response body as bytes: $content');
         return content;
       } else {
-        print('Failed to fetch data: ${response.statusCode}, ${response.reasonPhrase}');
+        print(
+            'Failed to fetch data: ${response.statusCode}, ${response.reasonPhrase}');
         throw Exception('Failed to fetch data: ${response.statusCode}');
       }
     } catch (e) {
