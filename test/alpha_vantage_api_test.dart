@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:alpha_vantage_api/services/complete_alpha_vantage_service.dart';
 import 'package:alpha_vantage_api/services/mixins/alpha_vantage_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +24,7 @@ void main() {
       try {
         final content = await service.fetchContent(functionName,
             additionalParams: additionalParams);
-        print('Received content: $content');
+        log('Received content: $content');
 
         expect(content.isNotEmpty, isTrue);
       } catch (e) {
@@ -39,7 +41,7 @@ void main() {
 
         expect(content.isNotEmpty, isTrue);
       } catch (e) {
-        print('Caught expected exception: $e');
+        log('Caught expected exception: $e');
       }
     });
   });
