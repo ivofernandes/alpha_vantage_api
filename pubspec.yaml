@@ -1,7 +1,8 @@
 name: alpha_vantage_api
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
+homepage: https://incaview.com
+repository: https://github.com/ivofernandes/alpha_vantage_api
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
