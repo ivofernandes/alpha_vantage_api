@@ -11,7 +11,8 @@ mixin AlphaVantageService {
   }
 
   /// Helper method to construct the URI
-  Uri _constructUri(String functionName, {Map<String, String>? additionalParams}) {
+  Uri _constructUri(String functionName,
+      {Map<String, String>? additionalParams}) {
     return Uri.https(
       'www.alphavantage.co',
       '/query',
@@ -24,14 +25,17 @@ mixin AlphaVantageService {
   }
 
   /// Generates the URL based on function name and additional parameters
-  String generateUrl(String functionName, {Map<String, String>? additionalParams}) {
-    return _constructUri(functionName, additionalParams: additionalParams).toString();
+  String generateUrl(String functionName,
+      {Map<String, String>? additionalParams}) {
+    return _constructUri(functionName, additionalParams: additionalParams)
+        .toString();
   }
 
   /// Fetches data from Alpha Vantage API
   Future<String> fetchContent(String functionName,
       {Map<String, String>? additionalParams}) async {
-    final Uri uri = _constructUri(functionName, additionalParams: additionalParams);
+    final Uri uri =
+        _constructUri(functionName, additionalParams: additionalParams);
 
     try {
       HttpClient httpClient = HttpClient();

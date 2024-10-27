@@ -73,13 +73,15 @@ class _AlphaVantageHomePageState extends State<AlphaVantageHomePage> {
     }
 
     // Generate the resulting URL for the user's input
-    final constructedUrl = service.generateUrl(functionName, additionalParams: additionalParams);
+    final constructedUrl =
+        service.generateUrl(functionName, additionalParams: additionalParams);
     setState(() {
       _constructedUrl = constructedUrl;
     });
 
     try {
-      final content = await service.fetchContent(functionName, additionalParams: additionalParams);
+      final content = await service.fetchContent(functionName,
+          additionalParams: additionalParams);
       setState(() {
         _result = content;
       });
@@ -169,7 +171,8 @@ class _AlphaVantageHomePageState extends State<AlphaVantageHomePage> {
               ),
               const SizedBox(height: 16),
 
-              if (_selectedFunction == 'TIME_SERIES_INTRADAY' || _selectedFunction == 'TIME_SERIES_DAILY') ...[
+              if (_selectedFunction == 'TIME_SERIES_INTRADAY' ||
+                  _selectedFunction == 'TIME_SERIES_DAILY') ...[
                 TextField(
                   controller: _symbolController,
                   decoration: const InputDecoration(
